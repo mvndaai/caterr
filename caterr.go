@@ -3,10 +3,6 @@ Package caterr creates errors with a category to help understand how to handle t
 */
 package caterr
 
-import (
-	errors "golang.org/x/xerrors"
-)
-
 // Interface can be used
 type Interface interface {
 	error
@@ -42,25 +38,6 @@ func Wrap(err error, category interface{}, message string) error {
 	}
 }
 
-// IsCategory determines if the error has a category in its stack
-func IsCategory(err error, category interface{}) bool {
-	if err == nil {
-		return false
-	}
-	var cat Interface = &impl{}
-	for {
-		if errors.As(err, &cat) {
-			if cat.Category() == category {
-				return true
-			}
-		}
-		err = errors.Unwrap(err)
-		if err == nil {
-			return false
-		}
-	}
-}
-
 func (e *impl) Error() string {
 	if e.wrapped != nil {
 		return e.message + " : " + e.wrapped.Error()
@@ -69,8 +46,11 @@ func (e *impl) Error() string {
 }
 
 func (e *impl) As(err interface{}) bool {
-	_, ok := err.(Interface)
-	return ok
+	if caterr, ok := err.(Interface); ok {
+		return caterr.Category() == e.Category()
+
+	}
+	return false
 }
 
 func (e *impl) Is(err error) bool     { return e.As(err) }
