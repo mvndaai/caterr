@@ -3,6 +3,8 @@ Package caterr creates errors with a category to help understand how to handle t
 */
 package caterr
 
+import "errors"
+
 // Interface can be used
 type Interface interface {
 	error
@@ -36,6 +38,11 @@ func Wrap(err error, category interface{}, message string) error {
 		message:  message,
 		wrapped:  err,
 	}
+}
+
+// HasCategory checks if an error has a specified category
+func HasCategory(err error, category interface{}) bool {
+	return errors.Is(err, &impl{category: category})
 }
 
 func (e *impl) Error() string {

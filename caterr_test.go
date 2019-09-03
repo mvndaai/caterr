@@ -1,10 +1,10 @@
 package caterr_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/mvndaai/caterr"
-	errors "golang.org/x/xerrors"
 )
 
 func TestWrap(t *testing.T) {
@@ -76,5 +76,18 @@ func TestWrapMultipleCategories(t *testing.T) {
 	err = caterr.Wrap(err, "different category", "foo")
 	if !errors.Is(err, target) {
 		t.Error("it should have matched the bottom cateogry")
+	}
+}
+
+func TestHasCategory(t *testing.T) {
+	category := 0
+	err := caterr.New(category, "caterr")
+	if !caterr.HasCategory(err, category) {
+		t.Error("it should have had the category")
+	}
+
+	err = errors.New("abc")
+	if caterr.HasCategory(err, category) {
+		t.Error("it should not have had the category")
 	}
 }
