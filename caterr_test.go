@@ -2,6 +2,7 @@ package caterr_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/mvndaai/caterr"
@@ -20,6 +21,11 @@ func TestWrap(t *testing.T) {
 		}
 
 		err = caterr.Wrap(err, category, "caterr")
+		if !errors.Is(err, target) {
+			t.Error("did not match the category")
+		}
+
+		err = fmt.Errorf("builtin %w", err)
 		if !errors.Is(err, target) {
 			t.Error("did not match the category")
 		}
