@@ -5,7 +5,7 @@ package caterr
 
 import "errors"
 
-// Interface can be used
+// Interface can be used for type checking especially in As
 type Interface interface {
 	error
 	Category() interface{}
